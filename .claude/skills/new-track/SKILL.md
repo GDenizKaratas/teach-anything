@@ -9,8 +9,8 @@ A track is one coherent learning path toward one concrete capability. Every trac
 
 ## 1. Goal interview (AskUserQuestion, no grading)
 
-- What do they want to be able to **do**? Push until it's concrete and observable. "nilearn öğrenmek" is not a goal. "Bir fMRI verisini açıp aktivasyon haritasını çizebilmek" is.
-- Why? What real situation will they use it in (job, lab, project)? This decides the examples.
+- What do they want to be able to **do**? Push until it's concrete and observable. "Lineer cebir öğrenmek" is not a goal. "Bir matrisin neden ve ne zaman tersinir olduğunu açıklayıp hesaplayabilmek" is. "Bir kütüphaneyi öğrenmek" is not a goal. "O kütüphaneyle kendi verimi açıp tek bir analizi baştan sona yapabilmek" is.
+- Why? What real situation will they use it in? This decides the scope and keeps the motivation visible.
 - Time budget and deadline, if any.
 
 Write the answers into the track's `README.md` (goal in their words + a concrete success criterion).
@@ -18,7 +18,7 @@ Write the answers into the track's `README.md` (goal in their words + a concrete
 ## 2. Prerequisites and order
 
 - What does this goal depend on? Compare against existing tracks (`tools/learn progress`).
-- If a prerequisite is missing, propose doing it first as its own track, or as a short opening section, and **scope the prerequisite to the goal**. Example: Python for a future nilearn user needs variables, types, lists, dicts, loops, functions, imports, files/paths, numpy arrays and reading errors. It doesn't need classes, decorators or web frameworks.
+- If a prerequisite is missing, propose doing it first as its own track, or as a short opening section, and **scope the prerequisite to the goal**. Example: Python as a prerequisite for a data-analysis library needs variables, types, lists, dicts, loops, functions, imports, files/paths, arrays and reading errors. It doesn't need classes, decorators or web frameworks.
 - Big goals split into a chain of tracks of roughly 8–15 nodes each.
 
 ## 3. Research (researcher subagent, always)
@@ -27,7 +27,7 @@ Launch the `researcher` agent with a precise brief:
 
 - the field's real first principles and standard teaching order;
 - **common beginner misconceptions** (education research, official tutorials' FAQ, forums);
-- for libraries: the **current stable API and version** from the official docs (e.g. https://nilearn.github.io/stable/), plus what changed recently, deprecated functions to avoid, and the datasets available for practice;
+- for libraries: the **current stable API and version** from the official docs (the `stable` docs, not a blog), plus what changed recently, deprecated functions to avoid, and the datasets available for practice;
 - canonical beginner pitfalls and error messages.
 
 Don't plan from memory. Cite sources in `README.md` under "Sources".

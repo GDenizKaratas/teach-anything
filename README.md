@@ -2,7 +2,7 @@
 
 A personal tutor that runs inside Claude Code (VS Code extension or CLI). It can teach any topic to any learner to the same standard: it starts from unconditional truths, builds by motivated discovery, uses diagnostic multiple-choice questions where every wrong option maps to a known misconception, schedules spaced repetition, assigns hands-on tasks with tests, and records everything in files so each session resumes exactly where the last one stopped.
 
-First real use case: teaching Python from zero to a physician, and then nilearn for neuroimaging research.
+It knows nothing about the learner up front beyond what they or a mentor tell it. It gets to know them from their answers: which wrong option they choose, how calibrated their confidence is, what kind of explanation lands, and how fast they move. That evidence shapes the teaching.
 
 The learner-facing guide is [BASLA.md](BASLA.md) (Turkish).
 
@@ -11,7 +11,7 @@ The learner-facing guide is [BASLA.md](BASLA.md) (Turkish).
 | Part | Where | Role |
 |---|---|---|
 | Entry point | `CLAUDE.md` | session protocol, skill routing, hard rules, beginner communication |
-| Skills | `.claude/skills/` | `onboarding`, `new-track`, `teach` (+ `questions.md`), `review`, `task`, `cheatsheet`, `wrap-up`, `setup` |
+| Skills | `.claude/skills/` | `onboarding`, `new-track`, `teach` (+ `questions.md`, `engagement.md`), `review`, `task`, `cheatsheet`, `wrap-up`, `setup` |
 | Track standard | `.claude/skills/new-track/standard.md` | the quality checklist every track must pass |
 | Researcher | `.claude/agents/researcher.md` | verifies facts and APIs before they are taught |
 | Engine | `tools/learn` (stdlib Python) | spaced repetition (SM-2 variant, confidence-aware), deterministic grading, option shuffling, attempt log, mastery levels, validation |
@@ -40,6 +40,9 @@ tools/learn due [--track t] [--limit 6] [--ahead 1]
 tools/learn record --card pb-001 --choice B --confidence 3
 tools/learn task --track t --task 01-x --node n --status passed --hints 1
 tools/learn progress [--track t]         # new → checked → retained → owned per node
+tools/learn signals                      # how this learner learns: calibration, question types, trend, hints
+tools/learn journey                      # then-vs-now evidence for recaps
+tools/learn moment --kind recap          # log an engagement moment (pacing: recap/teaser/value/milestone)
 tools/learn validate [--track t]         # checks the mechanical parts of the standard
 tools/doctor                             # learner's environment
 ```

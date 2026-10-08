@@ -17,13 +17,10 @@ A cheatsheet you hand over is just reading material. One the learner reconstruct
 ```markdown
 ## <node title>
 **Temel gerçek:** <the unconditional truth or rule, one line>
-**Örnek:**
-```python
-<minimal, runnable, from their world>
-```
+**Örnek:** <minimal example: a runnable code block if code, LaTeX if math>
 **Dikkat (senin hatan):** <their own recorded misconception for this node, if any, from attempts/misconceptions>
 ```
 
-5. Tell them where it is ([cheatsheet.md](…), Cmd+Shift+V for the preview) and that it grows as they learn.
+5. Tell them where it is ([cheatsheet.md](…), Markdown preview: Cmd+Shift+V on Mac, Ctrl+Shift+V on Windows) and that it grows as they learn. Log it with `tools/learn moment --kind cheatsheet --note "<nodes added>"`.
 
 Keep it short: one screen per ~5 nodes. If an entry needs a paragraph, the node is too big. Split it in `map.md`.

@@ -14,6 +14,7 @@ description: Close a learning session cleanly so the next one resumes exactly wh
    - `map.md` node statuses, based on `tools/learn progress --track <t>`.
    - `glossary.md`: terms that came up today.
    - `misconceptions.md`: observed / new.
-   - `learner/profile.md`: only **stable** evidence (a strength or gap seen repeatedly, a preference they stated). Not a diary.
+   - `learner/profile.md` → Observed: run `tools/learn signals`. Add only patterns that hold across sessions (calibration, what kind of explanation landed, pace, strong and weak question types), each with a date and the evidence. Not a diary.
 3. **Tell the learner** in 2–3 lines: what they can do now that they couldn't before (concrete), what comes next time, and roughly how many review questions will be waiting (`tools/learn due --ahead 1 --limit 0` → `due_total`). End warmly but without empty praise.
-4. If 3+ new nodes reached `checked` since the last cheatsheet update, offer the `cheatsheet` skill next time (not now; the session is over).
+4. **Teaser.** If status allows one and the session ended on a good note, close with a one-sentence curious hint about the next node (`engagement.md` §3). Log it with `tools/learn moment --kind teaser`.
+5. If 3+ new nodes reached `checked` since the last cheatsheet update, offer the `cheatsheet` skill next time (not now; the session is over).

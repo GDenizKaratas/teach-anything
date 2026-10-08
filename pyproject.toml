@@ -5,9 +5,8 @@ description = "Learner environment: packages the tracks need. Groups are install
 requires-python = ">=3.11"
 dependencies = ["pytest>=8"]
 
-[dependency-groups]
-# nilearn track (neuroimaging). Install with: uv sync --group neuro
-neuro = ["nilearn", "matplotlib"]
+# Track-specific packages are added as dependency groups when a track needs them:
+#   uv add --group <track> <package>   then   uv sync --group <track>
 
 [tool.uv]
 package = false

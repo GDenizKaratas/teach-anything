@@ -5,7 +5,7 @@ description: Hands-on practice. Create a small task the learner does themselves 
 
 # Tasks
 
-Understanding isn't owned until the learner can **produce** it. Tasks are where that happens. The learner writes the code; you design, hint and review.
+Understanding isn't owned until the learner can **produce** it. Tasks are where that happens. The learner produces the work (code, a proof, a derivation, a solved problem, a written explanation); you design, hint and review.
 
 ## Where tasks live
 
@@ -16,7 +16,7 @@ tracks/<track>/tasks/NN-short-slug/
 └── test_solution.py   # your checks (pytest)
 ```
 
-Non-code tasks (a concept map, a written explanation, reading a plot) use `CHECK.md` (a rubric) instead of tests.
+Non-code tasks (a proof, a derivation, a worked problem, a written explanation, reading a plot) use `solution.md` for the learner's work (LaTeX for math) and `CHECK.md` (a rubric: what a complete, correct answer must contain) instead of tests.
 
 Free experiments go in `workspace/`, the learner's playground. You never write there either.
 
@@ -24,7 +24,7 @@ Free experiments go in `workspace/`, the learner's playground. You never write t
 
 - **One node (or two adjacent ones) per task.** It should fit in 10–20 minutes for this learner.
 - **Climb the PRIMM ladder over a node's tasks:** predict-and-run a given snippet → investigate (change one thing, observe) → modify → make from a blank file. For a complete beginner, start at the bottom.
-- **Use their world.** Patient lists, lab values, brain-region names, scan metadata. The data should feel like the job they're heading to.
+- **Clear, topic-native content.** Use the simplest data or problem that exercises the node. Connect it to the learner's goal when the link is real (e.g. a step they'll actually need later), but don't theme it after their background.
 - **TASK.md** contains:
   - what to do in 3–6 numbered steps, plain language, one action per step;
   - exactly how to run it. Early on, have them click ▷ "Run Python File" in VS Code. Later, teach the terminal: `uv run python solution.py`, then `uv run pytest`;
@@ -50,9 +50,9 @@ If they ask you to just write it: say kindly that writing it themselves is the p
 
 ## Checking their work
 
-1. Read their `solution.py`. Run `uv run pytest tracks/<t>/tasks/NN-slug -q`.
+1. Read their `solution.py` / `solution.md`. For code, run `uv run pytest tracks/<t>/tasks/NN-slug -q`. For non-code, check it against `CHECK.md` point by point, and say which points are met.
 2. Translate the result into plain words. For a failure, show them how to read the message: last line first, which test, expected vs got.
-3. **Passed?** That isn't the end. Ask them to **explain two lines** of their own code ("bu satır ne yapıyor, neden gerekli?"), then give one **small modification challenge** ("şimdi aynısını 3 hasta için yap").
+3. **Passed?** That isn't the end. Ask them to **explain two lines** of their own code ("bu satır ne yapıyor, neden gerekli?"), then give one **small modification challenge** ("şimdi aynısını 3 değer için yap").
 4. Look for misconceptions in working code too (e.g. it passes by accident). Name them and record them in `misconceptions.md`.
 5. Record: `tools/learn task --track <t> --task NN-slug --node <node> --status passed|failed|explained --hints <n> --note "<one line>"`. Mark `explained` once the explain-back succeeds. Together with a delayed correct card, that makes the node **owned**.
 
@@ -62,4 +62,4 @@ When their code crashes, it's a teaching opportunity, not an obstacle. Have them
 
 ## Capstone projects
 
-Near the end of a track, a task can grow into a small project in `projects/<name>/`, a real folder with its own README and a slightly larger goal (e.g. "load a public fMRI dataset and plot one contrast"). The same rules apply: the learner writes the code. Learning project structure (folders, environment, git) can be part of the goal at that stage, not before.
+Near the end of a track, a task can grow into a small project in `projects/<name>/`, a real folder with its own README and a slightly larger goal (a small end-to-end slice of the learner's actual goal). The same rules apply: the learner writes the code. Learning project structure (folders, environment, git) can be part of the goal at that stage, not before.

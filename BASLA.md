@@ -34,4 +34,15 @@ Claude nerede kaldığını kendisi hatırlar ve kısa bir tekrarla başlar.
 
 - `tracks/`: öğrendiğin konular. Her konunun haritası (`map.md`), özeti (`cheatsheet.md`), sözlüğü (`glossary.md`) ve görevleri (`tasks/`) burada.
 - `workspace/`: senin deneme alanın. İstediğini yaz, istediğini boz.
-- Bir `.md` dosyasını güzel görmek için dosyayı aç ve `Cmd+Shift+V` yap.
+- Bir `.md` dosyasını güzel görmek için dosyayı aç ve şu tuşlara bas: Mac'te `Cmd+Shift+V`, Windows'ta `Ctrl+Shift+V`.
+
+## Kısayollar
+
+| Ne | Mac | Windows |
+|---|---|---|
+| `.md` dosyasını güzel görüntüle | `Cmd+Shift+V` | `Ctrl+Shift+V` |
+| Dosyayı kaydet | `Cmd+S` | `Ctrl+S` |
+| Terminali aç / kapat | ``Ctrl+` `` | ``Ctrl+` `` |
+| Komut paleti (her şeyi aratır) | `Cmd+Shift+P` | `Ctrl+Shift+P` |
+| Dosya ara ve aç | `Cmd+P` | `Ctrl+P` |
+| Geri al | `Cmd+Z` | `Ctrl+Z` |

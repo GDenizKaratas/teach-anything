@@ -10,10 +10,7 @@ if [ -n "$UV" ]; then ok "uv $($UV --version 2>/dev/null | cut -d' ' -f2)"; else
 if [ -d .venv ]; then ok ".venv exists"; else no ".venv" "run: uv sync"; fi
 if [ -n "$UV" ] && [ -d .venv ]; then
   ok "python $($UV run --quiet python -c 'import platform; print(platform.python_version())' 2>/dev/null)"
-  for pkg in pytest numpy nilearn matplotlib; do
-    v=$($UV run --quiet python -c "import $pkg; print(getattr($pkg, '__version__', '?'))" 2>/dev/null)
-    if [ -n "$v" ]; then ok "$pkg $v"; else
-      case $pkg in pytest) no "$pkg" "run: uv sync" ;; *) printf '  · %s not installed (only needed when a track uses it: uv sync --group neuro)\n' "$pkg" ;; esac
-    fi
-  done
+  if $UV run --quiet python -c "import pytest" 2>/dev/null; then ok "pytest"; else no "pytest" "run: uv sync"; fi
 fi
+groups=$(sed -n '/^\[dependency-groups\]/,/^\[/p' pyproject.toml | sed -n 's/^\([A-Za-z0-9_-]*\) *= *\[.*/\1/p')
+for g in $groups; do printf '  · track group "%s" declared (install when needed: uv sync --group %s)\n' "$g" "$g"; done

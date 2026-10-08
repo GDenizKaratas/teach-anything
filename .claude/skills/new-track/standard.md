@@ -4,7 +4,8 @@ Every track must meet this standard, whatever the topic. Items marked ⚙ are ch
 
 ## Goal
 - [ ] The goal is an observable capability ("can do X"), in the learner's words, plus a concrete success criterion.
-- [ ] The track serves the learner's real-world purpose (profile), and the examples come from that world.
+- [ ] The track serves the learner's stated goal, and the motivation for each section points back to it.
+- [ ] Examples are clear and topic-native. Analogies to prior knowledge are used only where structurally accurate, with their break point stated.
 - [ ] The scope is cut to the goal. Every node is needed for the goal or for a node that is.
 
 ## Foundations

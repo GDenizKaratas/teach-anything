@@ -16,6 +16,8 @@ The goal is retrieval spread over time, the most reliable way to make learning l
 
 ## When a card goes wrong
 
+- **Cheatsheet first.** If the node is already in `cheatsheet.md`, send them there ([section](…)), then let them try a variant. Log it with `tools/learn moment --kind cheatsheet`. This builds the habit of using their own reference.
+
 - **Re-teach small, from the foundation.** Restate the unconditional truth the node rests on and re-derive the step, in 3–5 sentences. If the node needs more than that, note it in `handoff.md` under "Next step" and let `teach` handle it properly. Don't hijack the warm-up.
 - **Add a fresh variant card** for the same node with `add-card`: different surface, same idea. If a misconception was recorded, target it. Ask the variant later in the session, not right now.
 - If the same node has failed twice across sessions (`tools/learn progress` shows `struggling` or rising lapses), the foundation under it is probably wrong. Flag it in `handoff.md`, and next time probe the node it depends on.
@@ -24,7 +26,7 @@ The goal is retrieval spread over time, the most reliable way to make learning l
 
 After a card has been answered correctly 2–3 times, the learner may be recognizing the wording rather than knowing the idea. Instead of asking it again:
 
-- write a **transfer card**: same node, new context or format (MCQ → predict-output → explain, or another example from their world);
+- write a **transfer card**: same node, new context or format (MCQ → predict-output → explain, or another context);
 - `tools/learn retire --card <old> --reason "replaced by transfer card <new>"`.
 
 Prefer open `recall`/`explain` types for nodes that are already checked.

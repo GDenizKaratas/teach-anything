@@ -5,7 +5,7 @@ description: Teach the learner anything so it actually locks in and is understoo
 
 # Teaching
 
-Ported from the `learn` system's teach skill and extended for: complete beginners, short daily sessions (30–60 min), learners from other professions, and persistent state through `tools/learn`.
+Ported from the `learn` system's teach skill and extended for: any topic and any learner (from complete beginner to expert), short daily sessions, and persistent state through `tools/learn`.
 
 The goal is never "they can recite the fact". The goal is **understanding**: the fact can be derived from foundations the learner already accepts, it is connected into their mental model, and so it holds itself in place. Memorized facts rot. Understood facts don't.
 
@@ -57,12 +57,31 @@ Facts feel arbitrary when there's no visible reason they *had* to be this way, a
 - **Socratic**: pose the motivating problem and let the learner attempt it first. It is stronger, but costs effort. Default to it when they can plausibly reason their way there. If the question has a definite right answer, it's still graded. Use the question protocol (`questions.md`).
 - **Expository**: you narrate the motivated discovery yourself. Use it when the topic is beyond cold-reasoning reach, when the learner is tired, or with a **complete beginner on a brand-new kind of thing** (see Beginner mode).
 
-## Use the learner's world
+## Examples, analogies and the goal
 
-Choose examples, data and analogies from the learner's profession and goal (in `profile.md`). For a physician heading to neuroimaging, that means patients and lab values, brain regions, MRI scans, experiments, not shopping carts and Fibonacci. An anchor they already understand gives a new node something to connect to instantly.
+- **Default to topic-native examples.** Use the simplest, clearest example of the concept itself. Clarity beats theming. Don't dress concepts up in the learner's profession or hobby. A forced theme adds noise and assumes knowledge they may not have.
+- **Tie to the goal, not the persona.** Motivation comes from the learner's stated *goal* (in the track's `README.md`). Every few nodes, say briefly how this step gets used toward that goal, but only when the link is real.
+- **Bridge from prior knowledge only when it's structurally true.** If the learner already knows something with the *same structure*, use it and say where the bridge breaks. Example: a mathematician learning Python can lean on mathematical functions, but a Python function can also have side effects. A surface resemblance isn't a bridge.
+- **Don't infer knowledge from background.** A profession or degree tells you nothing reliable about what they know. Probe it.
 
-- An analogy is a bridge, not a foundation. Say where it breaks ("bu benzetme şurada çöker: …").
-- Keep the destination visible. Every few nodes, say how this step moves them toward their actual goal (e.g. "nilearn bir beyin görüntüsünü tam olarak böyle bir değişkende tutar").
+## Make it enjoyable and worth it
+
+Now and then, not in every message, add a small moment: a recap of what they can do now with a pointer to their cheatsheet, a curious hint about what's coming, where *this exact thing* is used, or a milestone. The `Engagement` section of `tools/learn status` says when a moment is due. What to do and the hard limits are in `engagement.md`. Never use a moment while the learner is struggling.
+
+## Know the learner from their answers
+
+Personalization comes from **evidence**, not assumptions. Every answer tells you something about how this person learns. Before a session, read `learner/profile.md` → Observed, and run `tools/learn signals`.
+
+- **Which wrong option they pick** tells you their current model. Teach against that model, not against a generic one.
+- **Calibration** (`signals`):
+  - *Overconfident* (often wrong when "sure"): ask "neden eminsin?" before revealing, use more explain/predict cards, and slow down.
+  - *Underconfident* (mostly right when "unsure"): show them the evidence that they know it, and fade support faster.
+- **Their own words** in open answers show their mental vocabulary. Reuse their phrasing when it's right, and fix it precisely when it's off.
+- **What landed.** Note which move produced the click for this person (worked example, Socratic question, a picture, a counter-example). Do more of what works for them.
+- **Pace and load.** How many nodes per session before errors rise, and how many hints per task. Size the next session by that, not by the default.
+- **Strong vs weak question types** (`by_question_type`): recognition can be strong while recall is weak. Push toward what's weak.
+
+Record a pattern in `profile.md` → Observed only once it shows up across sessions, with a date and the evidence ("2026-10-12: 3/3 high-confidence errors on indexing → overconfident there"). One session is an anecdote. The profile is a model of the learner, not a diary.
 
 ## Beginner mode (no prior experience in the domain)
 
@@ -100,22 +119,24 @@ Run all three phases in order. Scale each phase's *size* to the topic, never its
 - What are the unconditional truths this chunk rests on? Is there an atomic unit?
 - Which of them does the learner already hold (from 1a)? Build from there.
 - What is the motivated path from those truths to the goal?
-- Which examples from the learner's world carry it?
+- Which clear, topic-native examples carry it? Is there a genuine bridge from something they already know?
 - Socratic or expository for each stretch?
 
 Update the track's `map.md`: the mermaid DAG plus the node table. **Stress-test the roots**: is each root genuinely unconditional *for this learner*, or a disguised theorem? If it derives from something simpler, push it down.
 
-**Present the plan before teaching.** Give a few sentences on what comes in which order and why. For a beginner, skip graph jargon and give a simple numbered path ("1. … 2. … → sonunda şunu yapabileceksin"). Mention that the full map is in [map.md](…) (Markdown preview: Cmd+Shift+V). **Wait for the go-ahead.**
+**Present the plan before teaching.** Give a few sentences on what comes in which order and why. For a beginner, skip graph jargon and give a simple numbered path ("1. … 2. … → sonunda şunu yapabileceksin"). Mention that the full map is in [map.md](…) (Markdown preview: Cmd+Shift+V on macOS, Ctrl+Shift+V on Windows). **Wait for the go-ahead.**
 
 ### Phase 3: Teach (the loop)
 
 For **every node**, whether it's a foundational truth or a derived step:
 
 1. **Motivate.** Why do we need this node now? What problem does it solve?
-2. **Establish.** State a truth plainly, with no caveats. Build a derived step through a motivated move (Socratic or expository). For a beginner, use a worked example in their domain.
+2. **Establish.** State a truth plainly, with no caveats. Build a derived step through a motivated move (Socratic or expository). For a beginner, start with a worked example.
 3. **Connect.** Make the dependency edge explicit: how does this node hang off the ones already in place?
 4. **Check.** Ask a graded question through the question protocol (`questions.md`). It gets stored as a card, so it comes back for spaced review. If they miss it, the node isn't solid. Stop and fix it before building on it.
-5. **(Code nodes) Do.** After a couple of code nodes, hand off a small task via the `task` skill. Understanding isn't done until they can produce it.
+5. **Do.** After a couple of nodes, hand off a small task via the `task` skill: code, a proof, a derivation, a worked problem, whatever producing the knowledge means in this topic. Understanding isn't done until they can produce it.
+
+**Natural boundaries are where moments go** (`engagement.md`): after a node clicks or a task passes, check whether status allows one.
 
 **Interleave retrieval.** Every 2–3 new nodes, ask one question about an *earlier* node (from a previous session if possible). Retrieval across time is what makes things stick.
 

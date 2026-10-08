@@ -9,6 +9,7 @@ import os
 import sys
 from pathlib import Path
 
+sys.stdin.reconfigure(encoding="utf-8")
 data = json.load(sys.stdin)
 tool_input = data.get("tool_input", {})
 raw = tool_input.get("file_path") or tool_input.get("notebook_path")

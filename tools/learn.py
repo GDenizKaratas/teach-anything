@@ -464,6 +464,177 @@ def cmd_progress(a):
     out(report)
 
 
+def cmd_signals(a):
+    """How this learner learns, computed from their answers across all tracks."""
+    cards_att, tasks = [], []
+    for t in all_tracks():
+        for at in read_jsonl(TRACKS / t / "attempts.jsonl"):
+            (cards_att if at["kind"] == "card" else tasks).append(at)
+    if not cards_att:
+        out({"note": "no answers recorded yet"})
+        return
+
+    def acc(rows):
+        return {"n": len(rows), "correct_rate": round(sum(r["correct"] == "yes" for r in rows) / len(rows), 2)} if rows else {"n": 0}
+
+    names = {1: "guessed", 2: "unsure", 3: "sure"}
+    calib = {names[c]: acc([r for r in cards_att if r.get("confidence") == c]) for c in (1, 2, 3)}
+    sure, unsure = calib["sure"], calib["unsure"]
+    if sure.get("n", 0) >= 5 and sure["correct_rate"] < 0.7:
+        reading = "overconfident: 'sure' answers are often wrong → ask why they are sure, more explain cards, slow down"
+    elif unsure.get("n", 0) >= 5 and unsure["correct_rate"] > 0.8:
+        reading = "underconfident: 'unsure' answers are mostly right → point out the evidence, fade support faster"
+    else:
+        reading = "roughly calibrated (or too little data)"
+    by_type = {}
+    for r in cards_att:
+        by_type.setdefault(r["type"], []).append(r)
+    recent, earlier = cards_att[-20:], cards_att[-40:-20]
+    passed = [t for t in tasks if t["status"] in ("passed", "explained")]
+    out({
+        "answers": len(cards_att),
+        "calibration": calib, "calibration_reading": reading,
+        "high_confidence_errors": sum(r["correct"] == "no" and r.get("confidence") == 3 for r in cards_att),
+        "dont_know_rate": round(sum(r.get("choice") == "X" for r in cards_att) / len(cards_att), 2),
+        "by_question_type": {k: acc(v) for k, v in by_type.items()},
+        "delayed_recall": acc([r for r in cards_att if r.get("delayed")]),
+        "trend": {"last_20": acc(recent), "previous_20": acc(earlier)},
+        "tasks": {"events": len(tasks), "passed": len(passed),
+                  "avg_hints_when_passed": round(sum(t.get("hints_used", 0) for t in passed) / len(passed), 1) if passed else None},
+        "use": "update the Observed sections of learner/profile.md only with patterns that hold across sessions; cite the evidence",
+    })
+
+
+# ── engagement pacing ("chocolate"): when to recap, tease, celebrate ─────────
+# The LLM decides what to say; this decides *when*, so it is neither every message nor never.
+
+MOMENTS = LEARNER / "moments.jsonl"
+MOMENT_KINDS = {"recap", "cheatsheet", "teaser", "value", "milestone"}
+RECAP_EVERY_NODES = 4      # newly checked nodes since the last recap
+VALUE_EVERY_DAYS = 3       # at most one "where this is used" moment per ~3 study days
+TEASER_EVERY_DAYS = 2
+
+
+def all_attempts() -> list[dict]:
+    rows = []
+    for t in all_tracks():
+        for at in read_jsonl(TRACKS / t / "attempts.jsonl"):
+            at["track"] = t
+            rows.append(at)
+    return sorted(rows, key=lambda r: r["ts"])
+
+
+def checked_nodes() -> int:
+    return sum(1 for t in all_tracks() for n in node_progress(t).values()
+               if n["level"] in ("checked", "retained", "owned"))
+
+
+def study_days(attempts: list[dict]) -> list[str]:
+    return sorted({r["ts"][:10] for r in attempts})
+
+
+def streak(days: list[str]) -> int:
+    if not days:
+        return 0
+    d = dt.date.fromisoformat(days[-1])
+    if (today() - d).days > 1:
+        return 0
+    have, n = set(days), 0
+    while d.isoformat() in have:
+        n += 1
+        d -= dt.timedelta(days=1)
+    return n
+
+
+def achieved_milestones(attempts: list[dict]) -> list[str]:
+    m = []
+    cards = [r for r in attempts if r["kind"] == "card"]
+    tasks = [r for r in attempts if r["kind"] == "task"]
+    if any(r["correct"] == "yes" for r in cards):
+        m.append("first-correct-answer")
+    if any(r["correct"] == "yes" and r.get("delayed") for r in cards):
+        m.append("first-remembered-after-a-delay")
+    if any(t["status"] in ("passed", "explained") for t in tasks):
+        m.append("first-task-passed")
+    if any(n["level"] == "owned" for t in all_tracks() for n in node_progress(t).values()):
+        m.append("first-node-owned")
+    c = checked_nodes()
+    m += [f"{k}-nodes-learned" for k in (5, 10, 20, 40) if c >= k]
+    s = streak(study_days(attempts))
+    m += [f"{k}-day-streak" for k in (3, 7, 14, 30) if s >= k]
+    for t in all_tracks():
+        nodes = node_progress(t)
+        if len(nodes) >= 5 and all(n["level"] in ("retained", "owned") for n in nodes.values()):
+            m.append(f"track-{t}-retained")
+    return m
+
+
+def engagement_hints() -> list[str]:
+    moments = read_jsonl(MOMENTS)
+    attempts = all_attempts()
+    days = study_days(attempts)
+    hints = []
+
+    def last(kind):
+        return next((r for r in reversed(moments) if r["kind"] == kind), None)
+
+    def days_since(row):
+        if not row:
+            return None
+        return sum(1 for d in days if d > row["ts"][:10])  # study days, not calendar days
+
+    r = last("recap")
+    new_nodes = checked_nodes() - (r.get("checked_nodes", 0) if r else 0)
+    if new_nodes >= RECAP_EVERY_NODES:
+        hints.append(f"recap due: {new_nodes} nodes newly learned since the last recap → at a natural break, "
+                     "'şimdiye kadar neler öğrendik' + link to cheatsheet (then: tools/learn moment --kind recap)")
+    for kind, every in (("teaser", TEASER_EVERY_DAYS), ("value", VALUE_EVERY_DAYS)):
+        ds = days_since(last(kind))
+        if days and (ds is None or ds >= every):
+            hints.append(f"{kind} allowed today (one, only if it fits naturally)")
+    celebrated = {r.get("note") for r in moments if r["kind"] == "milestone"}
+    fresh = [m for m in achieved_milestones(attempts) if m not in celebrated]
+    if fresh:
+        hints.append(f"uncelebrated milestone: {fresh[0]} → acknowledge it with evidence, briefly "
+                     f"(then: tools/learn moment --kind milestone --note {fresh[0]})")
+    return hints
+
+
+def cmd_moment(a):
+    if a.kind not in MOMENT_KINDS:
+        die(f"kind must be one of {sorted(MOMENT_KINDS)}")
+    LEARNER.mkdir(exist_ok=True)
+    row = {"ts": dt.datetime.now().isoformat(timespec="seconds"), "kind": a.kind, "note": a.note,
+           "checked_nodes": checked_nodes()}
+    append_jsonl(MOMENTS, row)
+    out({"recorded": row})
+
+
+def cmd_journey(a):
+    """Then-vs-now facts for a recap: concrete evidence of growth."""
+    attempts = all_attempts()
+    if not attempts:
+        out({"note": "nothing recorded yet"})
+        return
+    days = study_days(attempts)
+    cards = [r for r in attempts if r["kind"] == "card"]
+    first10, last10 = cards[:10], cards[-10:]
+
+    def rate(rows):
+        return round(sum(r["correct"] == "yes" for r in rows) / len(rows), 2) if rows else None
+
+    per_track = {}
+    for t in all_tracks():
+        nodes = node_progress(t)
+        per_track[t] = {"learned": sorted(k for k, n in nodes.items() if n["level"] in ("checked", "retained", "owned")),
+                        "owned": sorted(k for k, n in nodes.items() if n["level"] == "owned"),
+                        "struggling": sorted(k for k, n in nodes.items() if n["level"] == "struggling")}
+    out({"started": days[0], "study_days": len(days), "current_streak": streak(days),
+         "answers": len(cards), "accuracy_first_10": rate(first10), "accuracy_last_10": rate(last10),
+         "tasks_passed": sum(1 for r in attempts if r["kind"] == "task" and r["status"] in ("passed", "explained")),
+         "tracks": per_track})
+
+
 def handoff_next(track: str) -> str:
     f = TRACKS / track / "handoff.md"
     if not f.exists():
@@ -501,6 +672,9 @@ def cmd_status(a):
         nxt = handoff_next(active)
         if nxt:
             lines += ["", f"## Resume point ({active}/handoff.md)", nxt]
+    hints = engagement_hints()
+    if hints:
+        lines += ["", "## Engagement (see teach/engagement.md; never during struggle)"] + [f"- {h}" for h in hints]
     print("\n".join(lines))
 
 
@@ -516,6 +690,10 @@ def cmd_validate(a):
 
 
 def main():
+    # Windows consoles default to a legacy code page; Turkish text and symbols need UTF-8.
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     p = argparse.ArgumentParser(prog="learn", description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -568,6 +746,17 @@ def main():
     s = sub.add_parser("progress", help="per-node mastery levels + recurring misconceptions")
     s.add_argument("--track")
     s.set_defaults(fn=cmd_progress)
+
+    s = sub.add_parser("moment", help="log an engagement moment so pacing knows about it")
+    s.add_argument("--kind", required=True, help="recap|cheatsheet|teaser|value|milestone")
+    s.add_argument("--note", default="")
+    s.set_defaults(fn=cmd_moment)
+
+    s = sub.add_parser("journey", help="then-vs-now evidence for recaps and milestones")
+    s.set_defaults(fn=cmd_journey)
+
+    s = sub.add_parser("signals", help="how this learner learns: calibration, question types, trend, hints")
+    s.set_defaults(fn=cmd_signals)
 
     s = sub.add_parser("validate", help="check tracks against the standard")
     s.add_argument("--track")
