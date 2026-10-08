@@ -1,0 +1,14 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "files.exclude": {
+    "**/cards.jsonl": true,
+    "**/attempts.jsonl": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    ".venv": true,
+    "tools": true,
+    ".claude": true,
+    "learner/state.json": true,
+    "uv.lock": true
+  }
+}

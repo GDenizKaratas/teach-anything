@@ -1,0 +1,19 @@
+#!/bin/sh
+# Environment check for the learner's machine. Prints one line per item.
+cd "$(dirname "$0")/.." || exit 1
+ok() { printf '  ✓ %s\n' "$1"; }
+no() { printf '  ✗ %s → %s\n' "$1" "$2"; }
+echo "Environment check"
+UV=""
+if command -v uv >/dev/null 2>&1; then UV=uv; elif [ -x "$HOME/.local/bin/uv" ]; then UV="$HOME/.local/bin/uv"; fi
+if [ -n "$UV" ]; then ok "uv $($UV --version 2>/dev/null | cut -d' ' -f2)"; else no "uv" "not installed (setup skill, step 1)"; fi
+if [ -d .venv ]; then ok ".venv exists"; else no ".venv" "run: uv sync"; fi
+if [ -n "$UV" ] && [ -d .venv ]; then
+  ok "python $($UV run --quiet python -c 'import platform; print(platform.python_version())' 2>/dev/null)"
+  for pkg in pytest numpy nilearn matplotlib; do
+    v=$($UV run --quiet python -c "import $pkg; print(getattr($pkg, '__version__', '?'))" 2>/dev/null)
+    if [ -n "$v" ]; then ok "$pkg $v"; else
+      case $pkg in pytest) no "$pkg" "run: uv sync" ;; *) printf '  · %s not installed (only needed when a track uses it: uv sync --group neuro)\n' "$pkg" ;; esac
+    fi
+  done
+fi

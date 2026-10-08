@@ -1,0 +1,19 @@
+---
+name: wrap-up
+description: Close a learning session cleanly so the next one resumes exactly where this one stopped. Use when the learner says "bugünlük bu kadar", "bitir", "yoruldum", "sonra devam", or when the session reaches the learner's time budget.
+---
+
+# Wrap-up (about 5 minutes)
+
+1. **Exit question.** Ask one open question on today's most important node ("Bugün öğrendiğin en önemli şeyi bir cümleyle anlat."). Judge it and record it on a matching recall card. Create one with `add-card` if none exists.
+2. **Update the files.** Do this silently; don't narrate it:
+   - `tracks/<t>/handoff.md`:
+     - **Next step**: exactly what to do first next time (node, task, or question to revisit). Be specific enough that a fresh session can start without asking anything.
+     - **Last session**: date, nodes covered, task status, notable errors or misconceptions, energy and mood if notable.
+     - **Open questions**: doubts the learner raised that weren't resolved.
+   - `map.md` node statuses, based on `tools/learn progress --track <t>`.
+   - `glossary.md`: terms that came up today.
+   - `misconceptions.md`: observed / new.
+   - `learner/profile.md`: only **stable** evidence (a strength or gap seen repeatedly, a preference they stated). Not a diary.
+3. **Tell the learner** in 2–3 lines: what they can do now that they couldn't before (concrete), what comes next time, and roughly how many review questions will be waiting (`tools/learn due --ahead 1 --limit 0` → `due_total`). End warmly but without empty praise.
+4. If 3+ new nodes reached `checked` since the last cheatsheet update, offer the `cheatsheet` skill next time (not now; the session is over).

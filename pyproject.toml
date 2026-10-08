@@ -1,0 +1,13 @@
+[project]
+name = "teach-anything-workspace"
+version = "0.1.0"
+description = "Learner environment: packages the tracks need. Groups are installed only when a track reaches them."
+requires-python = ">=3.11"
+dependencies = ["pytest>=8"]
+
+[dependency-groups]
+# nilearn track (neuroimaging). Install with: uv sync --group neuro
+neuro = ["nilearn", "matplotlib"]
+
+[tool.uv]
+package = false
