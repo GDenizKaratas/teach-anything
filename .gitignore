@@ -5,8 +5,8 @@ __pycache__/
 .DS_Store
 
 # Learner data stays out of the template. In a learner's private copy, delete these lines to version their progress.
-learner/*
-!learner/.gitkeep
+# learner/*
+# !learner/.gitkeep
 # !learner/intake.example.md
 tracks/*
 !tracks/.gitkeep
