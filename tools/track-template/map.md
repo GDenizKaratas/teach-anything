@@ -10,8 +10,8 @@ graph TD
 
 ## Nodes
 
-| id | kind | statement (one line) | depends on | status |
+| id | kind | statement (one line) | depends on | mastery evidence |
 |---|---|---|---|---|
-| TODO | truth | | – | new |
+| TODO | truth | | – | e.g. predict-output card + task 01 |
 
-Status values: new · introduced · checked · retained · owned (`tools/learn progress` computes the evidence).
+Node status is computed by `tools/learn progress`. Don't track it here.

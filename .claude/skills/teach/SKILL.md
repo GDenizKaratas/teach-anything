@@ -5,7 +5,7 @@ description: Teach the learner anything so it actually locks in and is understoo
 
 # Teaching
 
-Ported from the `learn` system's teach skill and extended for: any topic and any learner (from complete beginner to expert), short daily sessions, and persistent state through `tools/learn`.
+Pedagogy adapted from the teach skill in amosblomqvist/learn, extended for: any topic and any learner (from complete beginner to expert), short daily sessions, and persistent state through `tools/learn`.
 
 The goal is never "they can recite the fact". The goal is **understanding**: the fact can be derived from foundations the learner already accepts, it is connected into their mental model, and so it holds itself in place. Memorized facts rot. Understood facts don't.
 
@@ -102,7 +102,7 @@ The learner has to trust the teacher completely, and one confident hallucination
 
 Run all three phases in order. Scale each phase's *size* to the topic, never its *shape*. A brand-new track gets its plan from the `new-track` skill. Inside an existing track, probe and plan each new chunk briefly.
 
-### Phase 1: Probe (never skip)
+### Phase 1: Probe (never skip, unless the learner is a declared complete beginner in this subject; then teach node 1 and let the node checks map the edge)
 
 **1a. Current level: graded questions.** Your job is to map the learner, not spot-check them. Find the *edge* of their understanding along every strand the lesson depends on.
 
@@ -112,7 +112,7 @@ Run all three phases in order. Scale each phase's *size* to the topic, never its
 - **Binary-search the edge.** On right answers, jump difficulty up. On a miss, narrow back in.
 - **Beginner caveat:** a true beginner hits the ceiling immediately. Tell them up front that "bilmiyorum" is a perfectly good and useful answer. Stop probing a strand after two "don't know"s; you found the edge. Don't run a long series of questions they can't answer. It's discouraging and tells you nothing new.
 
-**1b. Their goal: AskUserQuestion without grading.** Interrogate the vision until it's concrete. This has no right answer.
+**1b. Their goal.** It's usually already in the track README. Ask (AskUserQuestion, no grading) only when this chunk's purpose is unclear.
 
 ### Phase 2: Plan (think hard)
 
@@ -122,9 +122,11 @@ Run all three phases in order. Scale each phase's *size* to the topic, never its
 - Which clear, topic-native examples carry it? Is there a genuine bridge from something they already know?
 - Socratic or expository for each stretch?
 
-Update the track's `map.md`: the mermaid DAG plus the node table. **Stress-test the roots**: is each root genuinely unconditional *for this learner*, or a disguised theorem? If it derives from something simpler, push it down.
+If the plan changes, update the track's `map.md`: the mermaid DAG and the node table (status lives in `tools/learn progress`, not in the map). **Stress-test the roots**: is each root genuinely unconditional *for this learner*, or a disguised theorem? If it derives from something simpler, push it down.
 
-**Present the plan before teaching.** Give a few sentences on what comes in which order and why. For a beginner, skip graph jargon and give a simple numbered path ("1. … 2. … → sonunda şunu yapabileceksin"). Mention that the full map is in [map.md](…) (Markdown preview: Cmd+Shift+V on macOS, Ctrl+Shift+V on Windows). **Wait for the go-ahead.**
+**Within an already approved track,** don't ask for approval again. Open the session with a one-line preview ("Bugün: X → Y, sonunda Z'yi yapabileceksin") and start. Present and wait only when you change the scope or order of the plan.
+
+**For a new track (from `new-track`), present the plan before teaching.** Give a few sentences on what comes in which order and why. For a beginner, skip graph jargon and give a simple numbered path ("1. … 2. … → sonunda şunu yapabileceksin"). Mention that the full map is in [map.md](…) (Markdown preview: Cmd+Shift+V on macOS, Ctrl+Shift+V on Windows). **Wait for the go-ahead.**
 
 ### Phase 3: Teach (the loop)
 
@@ -160,7 +162,7 @@ For 30 min, cut to one new node and a tiny task. Never squeeze in "one more node
 - Every graded question goes through `tools/learn` (see `questions.md`).
 - New wrong models go into the track's `misconceptions.md` the moment you see them.
 - New terms go into the track's `glossary.md`.
-- Node status in `map.md`: introduced → checked → retained → owned. Base it on `tools/learn progress`, never on feel.
+- Node status comes from `tools/learn progress` (new → learning → checked → retained → owned). Don't keep a copy by hand.
 - At the end: `wrap-up`.
 
 ## Formatting

@@ -53,12 +53,14 @@ EOF
 
 For `recall`/`explain`: no `options`, but include `"answer": "reference answer"`.
 
+For `predict-output` and every code-behavior claim, **run the code first** (`uv run python -c "…"`) and take the correct option from the real output. Never use memory for this.
+
 The script validates the card, **shuffles the options** (you never choose where the correct one sits), assigns an id, and returns the public view with letters A–D. If it rejects the card, fix the card and retry. Treat warnings as tells, and regenerate.
 
 **2. Ask with AskUserQuestion**, in the returned order:
 
 - Question 1 is the question itself. Use the option labels `"A) <text>"` exactly as returned. If an option has code or is long, put the full question, code and options in your chat message first and use the labels `"A"`, `"B"`, … For "which code is correct" questions, use the `preview` field to show each option's code.
-- Question 2 is confidence, in the same call: "Ne kadar eminsin?" with the options `Tahmin ettim` / `Emin değilim` / `Eminim`, which map to `--confidence 1/2/3`.
+- Question 2 is confidence, in the same call (in `teach` checks; optional in quick `review` warm-ups, where `--confidence` defaults to 2): "Ne kadar eminsin?" with the options `Tahmin ettim` / `Emin değilim` / `Eminim`, which map to `--confidence 1/2/3`.
 - **Never** add "(Recommended)" to any option, and never hint.
 - For `recall`/`explain`, ask in plain chat ("Kendi cümlelerinle: …") and let them type.
 

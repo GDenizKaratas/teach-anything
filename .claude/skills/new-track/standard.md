@@ -25,7 +25,7 @@ Every track must meet this standard, whatever the topic. Items marked ⚙ are ch
 
 ## Misconceptions ⚙
 - [ ] ⚙ `misconceptions.md` defines `m-…` ids.
-- [ ] Every risky node has ≥ 2 anticipated misconceptions, each with belief / why tempting / correction.
+- [ ] Every risky node has ≥ 2 anticipated misconceptions (belief / why tempting / correction) **by the time it is taught**.
 
 ## Questions ⚙
 - [ ] ⚙ Every option card has 2–4 options, exactly one correct, and a misconception id on every distractor.
@@ -35,7 +35,7 @@ Every track must meet this standard, whatever the topic. Items marked ⚙ are ch
 ## Practice ⚙
 - [ ] A PRIMM task ladder is planned per code node (predict → investigate → modify → make).
 - [ ] ⚙ Every task folder has `TASK.md` plus `test_*.py` (code) or `CHECK.md` (non-code).
-- [ ] The tests were verified against a correct solution in scratch before handing the task over.
+- [ ] The tests were verified with `tools/learn verify-task` before handing the task over.
 
 ## Learner fit
 - [ ] Session-sized steps fit the time budget in `profile.md`.

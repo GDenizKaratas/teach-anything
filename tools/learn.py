@@ -20,7 +20,10 @@ import datetime as dt
 import json
 import random
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -291,6 +294,16 @@ def cmd_add_card(a):
     cards = read_jsonl(path)
     existing = {c["id"] for c in cards}
     miscs = known_misconceptions(a.track)
+    stubbed = []
+    for item in items:
+        for o in item.get("options") or []:
+            m = o.get("misconception")
+            if m and not o.get("correct") and MISC_RE.fullmatch(m) and m not in miscs:
+                with (TRACKS / a.track / "misconceptions.md").open("a", encoding="utf-8") as f:
+                    f.write(f"\n## {m}\n- belief: {o.get('text', '')}\n- why tempting: TODO\n- correction: TODO\n"
+                            "- seen: anticipated (auto-added by add-card)\n")
+                miscs.add(m)
+                stubbed.append(m)
     prefix = "".join(w[0] for w in a.track.split("-"))[:4]
     n = len(cards)
     added, all_warnings = [], []
@@ -317,6 +330,8 @@ def cmd_add_card(a):
         added.append(public_view(item))
     write_jsonl(path, cards)
     res = {"added": added, "warnings": all_warnings}
+    if stubbed:
+        res["misconceptions_stubbed"] = f"{stubbed}: added to misconceptions.md; fill in 'why tempting' and 'correction' when convenient"
     if any("options" in c for c in added):
         res["note"] = "present options in exactly this order with these letters; grade only via `record`"
     out(res)
@@ -330,6 +345,8 @@ def cmd_due(a):
         for c in read_jsonl(TRACKS / t / "cards.jsonl"):
             if c.get("retired"):
                 continue
+            if not c["srs"].get("last"):
+                continue  # never asked (e.g. an unused probe card): not review material yet
             if c["srs"]["due"] <= horizon and (a.ahead or c["srs"].get("last") != today().isoformat()):
                 rows.append(c)
     # most overdue first, then interleave tracks/nodes so similar items are not blocked together
@@ -402,6 +419,27 @@ def cmd_retire(a):
     out({"retired": a.card, "reason": a.reason})
 
 
+def cmd_verify_task(a):
+    """Run a task's tests against a reference solution (stdin) in a temp copy; the learner's files are untouched."""
+    d = Path(a.dir).resolve()
+    if not (d / "TASK.md").exists():
+        die(f"{a.dir} has no TASK.md")
+    reference = sys.stdin.read()
+    if not reference.strip():
+        die("pass the reference solution on stdin")
+    with tempfile.TemporaryDirectory() as tmp:
+        for f in d.iterdir():
+            if f.is_file() and not f.name.startswith("solution"):
+                shutil.copy(f, tmp)
+        Path(tmp, a.solution).write_text(reference, encoding="utf-8")
+        uv = shutil.which("uv") or str(Path.home() / ".local" / "bin" / "uv")
+        cmd = [uv, "run", "--quiet", "pytest", "-q", tmp] if Path(uv).exists() or shutil.which("uv") \
+            else [sys.executable, "-m", "pytest", "-q", tmp]
+        r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    out({"passed": r.returncode == 0, "output": (r.stdout + r.stderr)[-2000:],
+         "note": "reference solution was used only in a temp dir and is gone; never put it in the learner's files"})
+
+
 def cmd_task(a):
     track_dir(a.track)
     if a.status not in {"started", "passed", "failed", "explained"}:
@@ -430,8 +468,10 @@ def node_progress(track: str) -> dict:
                 n["correct"] += 1
                 if at.get("delayed"):
                     n["delayed_correct"] += 1
+            elif at["correct"] == "partial":
+                n["partial"] = n.get("partial", 0) + 1
         elif at["kind"] == "task":
-            if at["status"] == "passed":
+            if at["status"] in ("passed", "explained"):
                 n["tasks_passed"] += 1
             if at["status"] == "explained":
                 n["explained"] += 1
@@ -445,6 +485,8 @@ def node_progress(track: str) -> dict:
             n["level"] = "retained"
         elif n["correct"]:
             n["level"] = "checked"
+        elif n.get("partial"):
+            n["level"] = "learning"
         else:
             n["level"] = "struggling"
     return nodes
@@ -511,8 +553,6 @@ def cmd_signals(a):
 MOMENTS = LEARNER / "moments.jsonl"
 MOMENT_KINDS = {"recap", "cheatsheet", "teaser", "value", "milestone"}
 RECAP_EVERY_NODES = 4      # newly checked nodes since the last recap
-VALUE_EVERY_DAYS = 3       # at most one "where this is used" moment per ~3 study days
-TEASER_EVERY_DAYS = 2
 
 
 def all_attempts() -> list[dict]:
@@ -572,26 +612,16 @@ def achieved_milestones(attempts: list[dict]) -> list[str]:
 def engagement_hints() -> list[str]:
     moments = read_jsonl(MOMENTS)
     attempts = all_attempts()
-    days = study_days(attempts)
     hints = []
 
     def last(kind):
         return next((r for r in reversed(moments) if r["kind"] == kind), None)
-
-    def days_since(row):
-        if not row:
-            return None
-        return sum(1 for d in days if d > row["ts"][:10])  # study days, not calendar days
 
     r = last("recap")
     new_nodes = checked_nodes() - (r.get("checked_nodes", 0) if r else 0)
     if new_nodes >= RECAP_EVERY_NODES:
         hints.append(f"recap due: {new_nodes} nodes newly learned since the last recap → at a natural break, "
                      "'şimdiye kadar neler öğrendik' + link to cheatsheet (then: tools/learn moment --kind recap)")
-    for kind, every in (("teaser", TEASER_EVERY_DAYS), ("value", VALUE_EVERY_DAYS)):
-        ds = days_since(last(kind))
-        if days and (ds is None or ds >= every):
-            hints.append(f"{kind} allowed today (one, only if it fits naturally)")
     celebrated = {r.get("note") for r in moments if r["kind"] == "milestone"}
     fresh = [m for m in achieved_milestones(attempts) if m not in celebrated]
     if fresh:
@@ -646,7 +676,8 @@ def handoff_next(track: str) -> str:
 
 def cmd_status(a):
     """Short, human-readable; printed into Claude's context at session start."""
-    lines = ["# Learning system status", f"date: {today().isoformat()}"]
+    lines = ["# Learning system status",
+             f"session started: {dt.datetime.now().strftime('%Y-%m-%d %H:%M')} (check `date` later to keep to the time budget)"]
     profile = LEARNER / "profile.md"
     if not profile.exists():
         lines += ["learner: NO PROFILE YET → run the onboarding skill first (greet, explain how this works, build learner/profile.md)."]
@@ -661,8 +692,8 @@ def cmd_status(a):
         lines.append("tracks: none yet → use the new-track skill once the learner's goal is clear.")
     for t in tracks:
         cards = read_jsonl(TRACKS / t / "cards.jsonl")
-        due = sum(1 for c in cards if not c.get("retired") and c["srs"]["due"] <= today().isoformat()
-                  and c["srs"].get("last") != today().isoformat())
+        due = sum(1 for c in cards if not c.get("retired") and c["srs"].get("last")
+                  and c["srs"]["due"] <= today().isoformat() and c["srs"].get("last") != today().isoformat())
         mark = " (ACTIVE)" if t == active else ""
         levels: dict[str, int] = {}
         for n in node_progress(t).values():
@@ -733,6 +764,11 @@ def main():
     s.add_argument("--card", required=True)
     s.add_argument("--reason", required=True)
     s.set_defaults(fn=cmd_retire)
+
+    s = sub.add_parser("verify-task", help="check a task's tests against a reference solution from stdin (temp copy)")
+    s.add_argument("--dir", required=True, help="tracks/<t>/tasks/NN-slug")
+    s.add_argument("--solution", default="solution.py")
+    s.set_defaults(fn=cmd_verify_task)
 
     s = sub.add_parser("task", help="record a task event")
     s.add_argument("--track", required=True)

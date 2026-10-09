@@ -7,14 +7,13 @@ Learning should feel good and feel worth it. A few well-placed moments make the 
 The status printed at session start has an **Engagement** section. It is the pacing signal:
 
 - `recap due` → do a recap at the next natural break.
-- `teaser allowed` / `value allowed` → you *may* use one today, if a moment fits naturally.
 - `uncelebrated milestone` → acknowledge it once, briefly.
 
 In a longer session, re-run `tools/learn status` at a natural break to see whether something has become due since the start. After each moment, log it so the pacing knows: `tools/learn moment --kind <recap|cheatsheet|teaser|value|milestone> --note "<what>"`.
 
 ## Hard limits
 
-- **At most 1–2 moments per session**, plus a teaser at wrap-up when allowed.
+- **At most 1–2 moments per session**, plus an optional teaser at wrap-up. Teasers and value moments aren't signaled by status. Use them when one fits, and not every session.
 - **Never while the learner is struggling or confused.** Fix the understanding first. A fun fact during frustration feels dismissive.
 - **Never in the middle of a reasoning chain.** Only at natural boundaries: right after a node clicks, after a task passes, at session start or end.
 - **Never invented.** A "where this is used" claim must be specific and true. If you're not sure, check with `researcher` or leave it out.

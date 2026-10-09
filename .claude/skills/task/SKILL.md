@@ -31,8 +31,30 @@ Free experiments go in `workspace/`, the learner's playground. You never write t
   - what success looks like ("Testler yeşil olunca bitti");
   - "Takılırsan Claude'a *ipucu* yaz."
 - **solution.py starter:** the minimal scaffold, with `# TODO` comments marking where they write. For a beginner, include the surrounding code they haven't learned yet, labeled "bu kısmı şimdilik olduğu gibi bırak".
-- **test_solution.py:** test behavior, not implementation. Give every assertion a plain-language message in the learner's language (`assert x == 3, "Toplam 3 olmalıydı, sen {x} buldun"`). Few tests, meaningful ones.
-- Before handing it over, run the tests against a correct solution in a **scratch** location (not `solution.py`) to make sure the task is solvable and the tests are right. Delete it afterwards.
+- **test_solution.py:** test behavior, not implementation. Give every assertion a plain-language message in the learner's language. Few tests, meaningful ones.
+  - **Before functions are taught** (top-level code, `print`), run the file and check its output. Importing it would execute it.
+    ```python
+    import os, subprocess, sys, pathlib
+    HERE = pathlib.Path(__file__).parent
+
+    def run(stdin=""):
+        return subprocess.run([sys.executable, str(HERE / "solution.py")], input=stdin, capture_output=True,
+                              text=True, encoding="utf-8", timeout=10, env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+
+    def test_greets():
+        r = run()
+        assert r.returncode == 0, f"Program hata verdi:\n{r.stderr}"
+        assert "Merhaba" in r.stdout, f"Çıktıda 'Merhaba' olmalıydı. Senin çıktın: {r.stdout!r}"
+    ```
+    If the task uses `input()`, pass the answers through `run(stdin="5\n")`.
+  - **Once functions are taught**, import them: `from solution import ortalama` and assert on return values.
+- **Before handing it over, verify the tests** with a correct solution, without touching the learner's files:
+  ```bash
+  tools/learn verify-task --dir tracks/<t>/tasks/NN-slug <<'EOF'
+  <reference solution>
+  EOF
+  ```
+  It runs in a temp copy and reports pass or fail. If a correct solution fails, fix the tests.
 - Run `tools/learn validate --track <t>` and `tools/learn task --track <t> --task NN-slug --node <node> --status started`.
 
 ## Hint ladder (never skip rungs, never jump to code)

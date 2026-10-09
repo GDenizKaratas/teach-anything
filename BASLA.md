@@ -6,9 +6,11 @@ Bu klasör senin kişisel öğretmenin. Öğretmen, VS Code'un içindeki Claude.
 
 1. Bu klasörü VS Code'da aç.
 2. Claude panelini aç: sağ üstteki Claude simgesine tıkla.
-3. Yaz: **"Merhaba, devam edelim"**
+3. **Yeni bir sohbet başlat** (panelin üstündeki yeni sohbet / New Chat düğmesi) ve yaz: **"Merhaba, devam edelim"**
 
-Claude nerede kaldığını kendisi hatırlar ve kısa bir tekrarla başlar.
+Claude nerede kaldığını kendisi hatırlar ve kısa bir tekrarla başlar. Her gün yeni sohbet aç. Dünkü sohbete devam edersen Claude bugünün tekrar sorularını göremez.
+
+**Claude izin isterse** (bir komut çalıştırmak ya da bir dosyayı değiştirmek için): bu klasördeki işler için **izin ver** (Allow / Yes). Emin değilsen önce "bu ne işe yarıyor?" diye sor.
 
 ## Ders sırasında
 

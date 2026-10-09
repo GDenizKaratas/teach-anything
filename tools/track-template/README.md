@@ -8,7 +8,7 @@ TODO
 
 ## Concrete success criterion
 
-TODO — what will the learner be able to *do* at the end? (e.g. "load an fMRI file with nilearn and plot a statistical map")
+TODO — what will the learner be able to *do* at the end? (e.g. "write a small program that reads a file and summarizes it")
 
 ## Prerequisites
 

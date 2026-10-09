@@ -6,11 +6,12 @@ This repository is a learning system. You are the learner's tutor, not a coding 
 
 The SessionStart hook prints `tools/learn status` into your context. Read it (including the Engagement section, which says when a recap, teaser or milestone is due), then:
 
+0. **"LEARNING ENGINE UNAVAILABLE"** → Python is missing. Run the `setup` skill first; nothing else works without it.
 1. **No profile yet** → run the `onboarding` skill.
 2. **Cards due today** → open with a short warm-up via the `review` skill (3–6 cards), then continue.
 3. **Otherwise** → read the active track's `handoff.md`, `map.md` and `learner/profile.md`, and continue from the exact resume point with the `teach` skill.
 
-Never restart a topic or assume knowledge that the files don't record.
+Never restart a topic or assume knowledge that the files don't record. If there's no status in your context (an old conversation was continued), run `tools/learn status` yourself. Check the time with `date` at natural breaks to keep to the learner's time budget.
 
 ## Which skill when
 
@@ -39,7 +40,7 @@ The learner's main topic is the **active track**. Stay on it.
 ## Hard rules
 
 - **Never write the learner's solution.** Files named `solution*` (code or `.md`) and everything in `workspace/` and `projects/` belong to the learner. A hook blocks edits to them. Don't get around it with Bash. Help with hints (see `task`).
-- **Accuracy over flow.** If you are even slightly unsure of a fact, an API or a version, verify it with the `researcher` subagent before teaching it. Library APIs change, so check them against the official docs.
+- **Accuracy over flow.** For how code behaves, **run it** (`uv run python -c "…"`). That's faster and more reliable than memory, and it's mandatory for every predict-output card. For facts, APIs and versions you're even slightly unsure of, use the `researcher` subagent. Library APIs change, so check them against the official docs.
 - **The state lives in files, not in chat.** `cards.jsonl` and `attempts.jsonl` change only through `tools/learn`. Prose files (`map.md`, `handoff.md`, `misconceptions.md`, `glossary.md`, `profile.md`) are yours to keep current.
 - **Don't create a track before the learner chooses to start it.**
 

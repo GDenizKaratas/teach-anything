@@ -37,8 +37,9 @@ Collect only what changes the teaching:
 - background (only as context; actual knowledge is measured by the probe, not assumed);
 - prior experience with the subject (any? from where?);
 - time per day and per week;
-- language preference;
-- operating system (macOS / Windows / Linux), so shortcuts and paths match.
+- language preference.
+
+Don't ask for the OS. Take it from your environment's platform and write it into the profile.
 
 Write `learner/profile.md`:
 
@@ -60,6 +61,10 @@ Write `learner/profile.md`:
 
 Don't store contact details or anything sensitive the teaching doesn't need.
 
-## 4. Into the first track
+## 4. Into the first track (session 1 should end with a real first step, not just plumbing)
 
-Run the `new-track` skill for their first goal (or its prerequisite). If time is short, do only the goal interview and the probe today, and end with one tiny success. For a coding track, that could be running a one-line program after `setup`. Then `wrap-up`.
+- As soon as the goal is clear (from intake + confirmation), start the `researcher` for the first track **in the background**. It can work while you finish the profile and orientation.
+- Run `new-track`, which builds only the first 2–3 nodes in detail on day 1.
+- If the learner has no experience with the subject, skip the diagnostic probe. Teach the first node right away.
+- For a coding track: if `tools/doctor` shows Python is ready, the first win is `workspace/merhaba.py`, typed and run by the learner.
+- Then `wrap-up`.

@@ -9,4 +9,4 @@ for py in python3 python "py -3"; do
   if $py -c "import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)" >/dev/null 2>&1; then exec $py "$@"; fi
 done
 echo "Python bulunamadı / Python not found. Claude'a 'kurulum yapalım' yaz." >&2
-exit 1
+exit 127

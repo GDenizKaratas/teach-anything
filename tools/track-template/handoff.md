@@ -2,9 +2,9 @@
 
 ## Next step
 
-Track just created. Probe the learner's level, then present the plan.
+Track just created. Finish new-track §4 (outline + first 2–3 nodes), present the plan, then teach the first node.
 
-## Last session
+## Session log (newest first)
 
 –
 

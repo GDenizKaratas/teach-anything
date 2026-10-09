@@ -7,7 +7,15 @@ description: Design a new learning track (any topic) to the repo's quality stand
 
 A track is one coherent learning path toward one concrete capability. Every track, whatever the topic, is built to the same standard (`standard.md` in this folder), and `tools/learn validate` checks the mechanical parts.
 
-## 1. Goal interview (AskUserQuestion, no grading)
+## 0. Create the folder first
+
+```bash
+tools/learn new-track <kebab-name> --title "<Human title>"
+```
+
+## 1. Goal (confirm, don't re-interview)
+
+If `learner/profile.md` or `intake.md` already state the goal, confirm and sharpen it in one question. Otherwise ask (AskUserQuestion, no grading):
 
 - What do they want to be able to **do**? Push until it's concrete and observable. "Lineer cebir öğrenmek" is not a goal. "Bir matrisin neden ve ne zaman tersinir olduğunu açıklayıp hesaplayabilmek" is. "Bir kütüphaneyi öğrenmek" is not a goal. "O kütüphaneyle kendi verimi açıp tek bir analizi baştan sona yapabilmek" is.
 - Why? What real situation will they use it in? This decides the scope and keeps the motivation visible.
@@ -23,7 +31,7 @@ Write the answers into the track's `README.md` (goal in their words + a concrete
 
 ## 3. Research (researcher subagent, always)
 
-Launch the `researcher` agent with a precise brief:
+Launch the `researcher` agent **in the background** with a precise brief, and keep talking with the learner meanwhile:
 
 - the field's real first principles and standard teaching order;
 - **common beginner misconceptions** (education research, official tutorials' FAQ, forums);
@@ -32,18 +40,14 @@ Launch the `researcher` agent with a precise brief:
 
 Don't plan from memory. Cite sources in `README.md` under "Sources".
 
-## 4. Build the track
+## 4. Build the track, incrementally
 
-```bash
-tools/learn new-track <kebab-name> --title "<Human title>"
-```
+Build the **outline** now and the **details** just in time. The learner shouldn't wait 20 minutes on day 1.
 
-Then fill in:
-
-- **`map.md`**: unconditional truths as roots, derived nodes, and the goal as the sink. Each node gets a one-line statement, its dependencies, and *how mastery will be evidenced* (which question type, which task). Stress-test every root: is it truly unconditional for this learner?
-- **`misconceptions.md`**: at least 2 anticipated misconceptions for every node with a real risk, from the research and your knowledge of the learner. Each has belief / why tempting / correction / `seen: anticipated`.
-- **Task ladder** in `README.md`: a list of planned tasks (PRIMM order) per node. Create the actual task folders only when you reach them.
-- **First probe cards**: write 4–8 diagnostic cards with `add-card` for phase 1a, so the probe is stored too.
+- **`map.md`, now:** all nodes as a mermaid DAG plus a node table (one-line statement, dependencies, how mastery will be evidenced). Unconditional truths are the roots and the goal is the sink. Stress-test every root: is it truly unconditional for this learner?
+- **Details for the first 2–3 nodes only:** their misconceptions in `misconceptions.md` (belief / why tempting / correction / `seen: anticipated`) and their first task idea. Add the next nodes' details as teaching reaches them, usually at the end of a session for the next one.
+- **Task ladder** in `README.md`: a short list of planned tasks per node. Create task folders only when you reach them.
+- **Probe:** only if the learner has some experience. Write probe cards one at a time as you ask them. Unasked cards are never scheduled, and a complete beginner gets no probe.
 
 Run `tools/learn validate --track <name>` until there are no errors. Treat warnings as defects to fix.
 
