@@ -24,8 +24,8 @@ Git kullanmıyorsan GitHub'dan "Download ZIP" ile indirip klasörü açabilirsin
 
 Terminalde:
 
-| macOS / Linux | Windows (PowerShell) |
-|---|---|
+| macOS / Linux                                      | Windows (PowerShell)                                                                  |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 \| iex"` |
 
 Sonra **VS Code'u kapatıp yeniden aç**, klasörde bir terminal aç (``Ctrl+` ``) ve şunu çalıştır:
