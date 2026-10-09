@@ -27,6 +27,8 @@ Write the answers into the track's `README.md` (goal in their words + a concrete
 
 - What does this goal depend on? Compare against existing tracks (`tools/learn progress`).
 - If a prerequisite is missing, propose doing it first as its own track, or as a short opening section, and **scope the prerequisite to the goal**. Example: Python as a prerequisite for a data-analysis library needs variables, types, lists, dicts, loops, functions, imports, files/paths, arrays and reading errors. It doesn't need classes, decorators or web frameworks.
+- **Scope by how the skill will really be used.** Ask yourself what the learner will do with their own judgment in the real setting, and what tools (including AI assistants) will produce for them. Teach the first deeply: reading, understanding, running, verifying, debugging, interpreting results, and knowing when output is wrong. Teach the second only as far as they need to check it. Rote production of things a tool reliably produces is low value. Understanding what the tool produced is high value.
+- **Touch the goal early.** Long prerequisite chains kill motivation. Order tracks so the learner reaches a first real step toward the goal as soon as the foundations allow. Before that, show now and then where the current node will be used in the goal (`teach/engagement.md`).
 - Big goals split into a chain of tracks of roughly 8–15 nodes each.
 
 ## 3. Research (researcher subagent, always)
